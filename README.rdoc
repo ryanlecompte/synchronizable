@@ -1,0 +1,55 @@
+= synchronizable
+
+Synchronizable is a gem that provides an easy module-based mechanism
+for making any object thread-safe with an instance-level lock. This
+gem was originally inspired from Mike Perham's dalli gem, which provides
+a ThreadSafe module for his memcached client. However, that solution
+is not currently generic. This gem attempts to provide a generic solution
+that can work with any object (including classes/modules) in your system.
+
+== Installation
+
+Synchronizable is available as a RubyGem:
+
+    gem install synchronizable
+
+== Examples
+
+    class Foo
+      def bar
+      end
+
+      def baz
+      end
+    end
+
+    foo = Foo.new
+    # the foo instance now has all methods synchronized / thread-safe
+    foo.extend(Synchronizable)
+
+    # note that classes are objects in Ruby and can also be synchronized
+    class Bar
+      # only class/singleton methods will become synchronized
+      extend Synchronizable
+
+      def self.foo
+      end
+    end
+
+== Note on Patches/Pull Requests
+
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a future version unintentionally.
+* Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+== Authors
+
+* Ryan LeCompte
+
+== Copyright
+
+Copyright (c) 2011 Ryan LeCompte. See LICENSE for
+further details.
+
