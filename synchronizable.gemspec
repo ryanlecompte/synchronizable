@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Ryan LeCompte"]
   s.email       = ["lecompte@gmail.com"]
   s.homepage    = "http://github.com/ryanlecompte/synchronizable"
-  s.summary     = %q{Synchronizable provides a generic mechanism to provide per-object thread safety}
-  s.description = %q{Synchronizable provides a generic mechanism to provide per-object thread safety}
+  s.summary     = %q{Synchronizable is a generic way to provide per-object thread safety}
+  s.description = %q{Synchronizable is a generic way to provide per-object thread safety}
 
   s.rubyforge_project = "synchronizable"
 
