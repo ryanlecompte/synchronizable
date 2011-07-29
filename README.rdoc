@@ -1,4 +1,4 @@
-= synchronizable
+= Synchronizable
 
 Synchronizable is a gem that provides an easy module-based mechanism
 for making any object thread-safe with an instance-level lock. This
@@ -47,6 +47,10 @@ Synchronizable is available as a RubyGem:
 == Authors
 
 * Ryan LeCompte
+
+== Credits
+
+* Mike Perham (inspired from ThreadSafety module in https://github.com/mperham/dalli)
 
 == Copyright
 
