@@ -35,5 +35,31 @@ describe Synchronizable do
       object.size
       lock.sync_invoked.should == true
     end
+
+    it "allows re-entrant methods" do
+      class Test
+        def m1
+          10
+        end
+
+        def m2
+          m1
+        end
+      end
+
+      t = Test.new
+      t.extend(Synchronizable)
+      t.m2.should == 10
+    end
+  end
+
+  it "protects a block via #synchronize" do
+    s = ""
+    s.methods.should_not include(:synchronize)
+    s.extend(Synchronizable)
+    s.methods.should include(:synchronize)
+    s.synchronize do
+      s.split
+    end
   end
 end

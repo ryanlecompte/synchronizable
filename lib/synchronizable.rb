@@ -1,4 +1,4 @@
-require 'thread'
+require 'monitor'
 require 'synchronizable/version'
 
 # Synchronizable is intended to be injected into objects via Object#extend.
@@ -20,11 +20,19 @@ module Synchronizable
         end
       end
     end
+
+    # define synchronize method that executes a block
+    # protected with the internal instance lock
+    obj.define_singleton_method(:synchronize) do |&block|
+      __lock.synchronize(&block)
+    end
   end
 
   private
 
   def __lock
-    @__lock ||= Mutex.new
+    # Monitor is used instead of Mutex in order to support
+    # re-entrant locking
+    @__lock ||= Monitor.new
   end
 end
