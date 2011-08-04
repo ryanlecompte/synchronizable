@@ -16,11 +16,9 @@ module Synchronizable
       original_method = obj.method(m)
       next if IGNORABLE_METHOD_OWNERS.include?(original_method.owner)
 
-      without_sync_method = "#{original_method.name}_without_sync"
-      obj.define_singleton_method(without_sync_method, original_method)
       obj.define_singleton_method(m) do |*args, &block|
         __lock.synchronize do
-          send(without_sync_method, *args, &block)
+          original_method.call(*args, &block)
         end
       end
     end
