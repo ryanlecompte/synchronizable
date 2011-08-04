@@ -1,7 +1,23 @@
 require 'spec_helper'
 
+class TestLock
+  attr_reader :sync_invoked
+
+  def initialize
+    @sync_invoked = false
+  end
+
+  def synchronize(&block)
+    @sync_invoked = true
+  end
+
+  def reset
+    @sync_invoked = false
+  end
+end
+
 describe Synchronizable do
-  context "when extended by an object" do
+  context "when extended" do
     let(:object) { String.new }
 
     it "creates an instance-level lock" do
@@ -11,18 +27,6 @@ describe Synchronizable do
     end
 
     it "creates a locked version of each original method" do
-      class TestLock
-        attr_reader :sync_invoked
-
-        def initialize
-          @sync_invoked = false
-        end
-
-        def synchronize(&block)
-          @sync_invoked = true
-        end
-      end
-
       lock = TestLock.new
       object.extend(Synchronizable)
       object.instance_variable_set(:@__lock, lock)
@@ -51,15 +55,33 @@ describe Synchronizable do
       t.extend(Synchronizable)
       t.m2.should == 10
     end
-  end
 
-  it "protects a block via #synchronize" do
-    s = ""
-    s.methods.should_not include(:synchronize)
-    s.extend(Synchronizable)
-    s.methods.should include(:synchronize)
-    s.synchronize do
-      s.split
+    it "handles singleton methods" do
+      class Foo
+        def self.m1
+          100
+        end
+      end
+
+
+      Foo.m1.should == 100
+      lock = TestLock.new
+      Foo.extend(Synchronizable)
+      Foo.instance_variable_set(:@__lock, lock)
+
+      lock.sync_invoked.should == false
+      Foo.m1
+      lock.sync_invoked.should == true
+    end
+
+    it "protects a block via #synchronize" do
+      s = ""
+      s.methods.should_not include(:synchronize)
+      s.extend(Synchronizable)
+      s.methods.should include(:synchronize)
+      s.synchronize do
+        s.split
+      end
     end
   end
 end

@@ -13,10 +13,14 @@ module Synchronizable
 
     # redefine all user-defined methods to utilize lock
     obj.methods.each do |m|
-      next if IGNORABLE_METHOD_OWNERS.include?(obj.method(m).owner)
+      original_method = obj.method(m)
+      next if IGNORABLE_METHOD_OWNERS.include?(original_method.owner)
+
+      without_sync_method = "#{original_method.name}_without_sync"
+      obj.define_singleton_method(without_sync_method, original_method)
       obj.define_singleton_method(m) do |*args, &block|
         __lock.synchronize do
-          super(*args, &block)
+          send(without_sync_method, *args, &block)
         end
       end
     end
