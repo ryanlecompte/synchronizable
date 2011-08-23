@@ -12,11 +12,11 @@ module Synchronizable
     obj.send(:__lock)
 
     # redefine all user-defined methods to utilize lock
-    obj.methods.each do |m|
-      original_method = obj.method(m)
+    obj.methods.each do |method|
+      original_method = obj.method(method)
       next if IGNORABLE_METHOD_OWNERS.include?(original_method.owner)
 
-      obj.define_singleton_method(m) do |*args, &block|
+      obj.define_singleton_method(method) do |*args, &block|
         __lock.synchronize do
           original_method.call(*args, &block)
         end
